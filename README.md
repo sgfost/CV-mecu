@@ -5,7 +5,7 @@ Computer Vision Mosquito Egg Counting
 ## repository structure:
 ```
 CV-mecu
-  ├── data 
+  ├── data
   │   └── images
   │       └── eggs1.png
   ├── docs
@@ -14,12 +14,12 @@ CV-mecu
   ├── README.md
   ├── setup.py
   ├── src
-  │   ├── compupavision
+  |   ├── __init__.py         # main
+  │   ├── compupavision       # application
   │   │   └── placeholder.py
-  │   ├── __init__.py
-  │   ├── share
+  │   ├── share               # testing ground
   │   │   └── placeholder.py
-  │   └── utils
+  │   └── utils               # extras
   │       └── placeholder.py
   └── tests
       └── test.py
