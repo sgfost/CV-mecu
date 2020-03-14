@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 
 # Read image
-im = cv2.imread('data/images/eggs1.png', cv2.IMREAD_GRAYSCALE)
 im2 = cv2.imread('15.png', cv2.IMREAD_GRAYSCALE)
 
 # Setup SimpleBlobDetector parameters.
@@ -38,17 +37,14 @@ else :
 detector2 = cv2.SimpleBlobDetector_create(params)
 
 # Detect blobs.
-keypoints = detector.detect(im)
 keypoints2 = detector2.detect(im2)
 
 # Draw detected blobs as red circles.
 # cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS ensures
 # the size of the circle corresponds to the size of blob
 
-im_with_keypoints = cv2.drawKeypoints(im, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 im_with_keypoints2 = cv2.drawKeypoints(im2, keypoints2, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
 # Show blobs
-cv2.imshow('Eggs', im_with_keypoints)
 cv2.imshow('Eggs', im_with_keypoints2)
 cv2.waitKey(0)
