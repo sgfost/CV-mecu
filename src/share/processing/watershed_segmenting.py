@@ -1,13 +1,5 @@
-# basic processing test
-# grayscale -> thresholding -> dilate -> erode
-# -> count white pixels in whole image and divide by
-#    number of white pixels in a single egg
-#
-# NOTE: still need to find a way to single out a lone egg to
-#       count the pixels, however this is surpisingly accurate
-#       when done manually on the one test image we have
-#
-# Written by Scott Foster
+# basic watershed segmenting
+# !!!!!!!!!!!!!!!!!(failed experiment)
 
 import cv2 as cv
 import numpy as np
@@ -23,7 +15,7 @@ def threshold(image):
     return cv.bitwise_not(timg)
 
 def dilate_erode(image):
-    ksize = 4
+    ksize = 3
     diterations = 1
     eiterations = 1
     kernel = np.ones((ksize, ksize), np.uint8)
@@ -38,6 +30,22 @@ def single_egg_pix(image):
 # count the number of white pixels in the whole image
 def count_white_pix(image):
     return np.sum(image == 255)
+
+def segment(image):
+    # remove noise from the image
+    kernel = np.ones((3,3), np.uint8)
+    opening = cv.morphologyEx(image, cv.MORPH_OPEN, kernel, iterations=2)
+    bg = cv.dilate(opening, kernel, iterations=3)
+    dt = cv.distanceTransform(opening, cv.DIST_L2, 5)
+    cv.imshow('d',dt)
+    cv.waitKey()
+    r, fg = cv.threshold(dt, 0.7*dt.max(),255,0)
+    #cv.imshow('fg', fg)
+    #cv.imshow('bg', bg)
+    #cv.waitKey()
+    fgu = np.uint8(fg)
+    unk = cv.subtract(bg, fgu)
+    return dt
 
 def count(img_path):
     # manually counted 222 eggs in the frame of eggs1.png
@@ -61,12 +69,12 @@ def count(img_path):
     #print('single egg pixels : ' + str(singlecount))
     #print('egg estimate: ' + str(count / singlecount))
 
-
 # -.-.-.-.-.-.-.-.-.-. main test -.-.-.-.-.-.-.-.-.-.-.-.-.-
 
-c, image = count(sys.argv[1])
-# return value (conform to test)
-print(c)
-
-cv.imshow('eggs', image)
-cv.waitKey()
+img = cv.imread('../../../data/images/1.png')
+img = cv.imread('water_coins.jpg')
+preproc = dilate_erode(threshold(grayscale(img)))
+proc = segment(img)
+#cv.imshow('eggs2', preproc)
+#cv.imshow('eggs3', proc)
+#cv.waitKey()
