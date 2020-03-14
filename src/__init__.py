@@ -20,7 +20,7 @@ def test(path):
         command.append('../data/images/' + image)
         count = int(subprocess.check_output(command))
         print('Percent difference for test #' + str((currimg + 1)) + ':')
-        print(abs(count - int(imagecounts[currimg])) / int(imagecounts[currimg]))
+        print(abs(count - int(imagecounts[currimg])) / int(imagecounts[currimg]) * 100)
         currimg += 1
 
 
