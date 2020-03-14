@@ -11,6 +11,7 @@
 
 import cv2 as cv
 import numpy as np
+import sys
 
 # -.-.-.-.-.-.-.-.-.-. functions -.-.-.-.-.-.-.-.-.-.-.-.-.-
 def grayscale(image):
@@ -28,8 +29,7 @@ def dilate_erode(image):
     kernel = np.ones((ksize, ksize), np.uint8)
     dimg = cv.dilate(image, kernel, iterations=diterations)
     eimg = cv.erode(dimg, kernel, iterations=eiterations)
-    return eimg
-
+    return eimg 
 # find a single egg in the image and count the white pixels
 # TODO: method to find the single egg
 def single_egg_pix(image):
@@ -39,27 +39,32 @@ def single_egg_pix(image):
 def count_white_pix(image):
     return np.sum(image == 255)
 
+def count(img_path):
+    # manually counted 222 eggs in the frame of eggs1.png
+    # open image
+    img = cv.imread(img_path)
+
+    processed = dilate_erode(threshold(grayscale(img)))
+    #cv.imshow('eggs', processed)
+    count = count_white_pix(processed)
+
+    # manually cropping out a single egg
+    x = 366
+    y = 74
+    h = 45
+    w = 64
+    simg = processed[y:y+h, x:x+w]
+    singlecount = single_egg_pix(simg)
+    
+    return int(count / singlecount)
+    #print('whole img pixels :  ' + str(count))
+    #print('                    ------')
+    #print('single egg pixels : ' + str(singlecount))
+    #print('egg estimate: ' + str(count / singlecount))
+
+    #cv.waitKey()
+
+
 # -.-.-.-.-.-.-.-.-.-. main test -.-.-.-.-.-.-.-.-.-.-.-.-.-
 
-# manually counted 222 eggs in the frame of eggs1.png
-img_path = '../../../data/images/eggs1.png'
-# open image
-img = cv.imread(img_path)
-
-processed = dilate_erode(threshold(grayscale(img)))
-cv.imshow('eggs', processed)
-count = count_white_pix(processed)
-
-# manually cropping out a single egg
-x = 366
-y = 74
-h = 45
-w = 64
-simg = processed[y:y+h, x:x+w]
-singlecount = single_egg_pix(simg)
-
-print('whole img pixels :  ' + str(count))
-print('                    ------')
-print('single egg pixels : ' + str(singlecount))
-print('egg estimate: ' + str(count / singlecount))
-cv.waitKey()
+print(count(sys.argv[1]))
