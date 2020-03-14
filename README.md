@@ -21,7 +21,10 @@ CV-mecu
   │   │   └── placeholder.py
   │   └── utils               # extras
   │       └── placeholder.py
-  └── tests
+  ├── tests
       └── test.py
+  ├── 15.jpg
+  ├── 15.png
+  └── opencv_test.py
 
 ```
