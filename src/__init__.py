@@ -2,15 +2,19 @@
 
 import argparse
 import textwrap
+# For relative imports to work in Python 3.6
+# import os, sys; sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import os
 import sys
 import subprocess
 
+from observer import start
+
+# default backend
+backend = "pixelcounting"
+
+# TODO: phase this out
 def test(path):
-    #hmm this is probably a bad way to do this.
-    # not the easiest thing to make a compliant script to test
-    # but oh well it is what it is, it'll work if you have a file
-    # that when run, outputs a numeric value (count of eggs)
     command = ["python"]
     command.append(path)
     imagelist = os.listdir('../data/images')
@@ -29,24 +33,59 @@ def main():
     parser = argparse.ArgumentParser(description='Count mosquito eggs in an image',
                                      formatter_class=argparse.RawTextHelpFormatter)
     # add args
+    parser.add_argument('file_path',
+                        metavar='PATH',
+                        action='store',
+                        type=str,
+                        nargs='?',
+                        help='Path of file to run counter on')
+    # TODO: phase this out
     parser.add_argument('-t',
                         '--test',
                         metavar='PATH',
                         action='store',
                         type=str,
                         help=textwrap.dedent('''\
-                        test a counting method
-                        PATH is the path to a python file
-                        containing a function count()
-                        that takes a path to an image and
-                        returns a count of eggs
+                        test a counting method <PATH>.py
+                        '''))
+    parser.add_argument('-a',
+                        '--backend',
+                        metavar='NAME',
+                        action='store',
+                        type=str,
+                        help=textwrap.dedent('''\
+                        use a specific backend algorithm
+                        '''))
+    parser.add_argument('-b',
+                        '--background',
+                        metavar='PATH',
+                        action='store',
+                        type=str,
+                        help=textwrap.dedent('''\
+                        run in the background, observe PATH
+                        for new files and run on files
                         '''))
 
     args = parser.parse_args()
 
-    # do tests
+    # arg logic
+    if args.backend:
+        # set backend to specified
+        backend = args.backend
+
     if args.test:
         test(args.test)
+    elif args.background:
+        # start running in background
+        print(f"watching {args.background} for new images")
+        patterns = ["*.png", "*.jpg"]
+        print(f"using backend {args.backend}")
+        start(patterns, args.background, backend)
+    else:
+        # assume user wants to run on a single file
+        # run on a single file with PATH positional argument
+        print(args.file_path)
+
 
 if __name__ == "__main__":
     main()
