@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-
-# run __init__.py
-python3 main.py "$@"
