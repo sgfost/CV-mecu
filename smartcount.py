@@ -13,7 +13,7 @@ import sys
 
 # preprocess the image with otsu binarization and erosion/dilation
 def preprocess(image):
-    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     _,otsu = cv.threshold(gray,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
     otsu = cv.bitwise_not(otsu)
     kernel = np.ones((2,2), np.uint8)
@@ -22,7 +22,9 @@ def preprocess(image):
     return eroded
 
 # implements the algorithm to count the eggs. image is an OpenCV Matrix
-def count(image):
+def count(path):
+    # read image from path
+    image = cv.imread(path)
     # find contours
     pp = preprocess(image)
     cont, _ = cv.findContours(pp, cv.RETR_TREE, cv.CHAIN_APPROX_NONE)
@@ -43,7 +45,7 @@ def count(image):
     upper = median * 1.5
 
     # draw all contours larger than upper bound on the mask
-    mask = np.zeros(img.shape[:2], dtype=img.dtype)
+    mask = np.zeros(image.shape[:2], dtype=image.dtype)
     for c in cont:
         if cv.contourArea(c) > upper:
             x, y, w, h = cv.boundingRect(c)
@@ -74,5 +76,4 @@ def count(image):
 
 if __name__ == "__main__":
     path = sys.argv[1]
-    img = cv.imread(path)
-    print(count(img))
+    print(count(path))
